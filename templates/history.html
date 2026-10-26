@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prediction History - Smart Crop Prediction System</title>
+
+  <!-- Local Offline Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  <!-- Direct File Explorer (file://) Fallback -->
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.write('<link rel="stylesheet" href="../static/css/bootstrap.min.css">');
+      document.write('<link rel="stylesheet" href="../static/css/style.css">');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="custom-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="{{ url_for('index') }}" class="brand-link">
+        <span>🌱</span>
+        <span>Smart Crop</span>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('index') }}" class="nav-link-custom">Home</a>
+        <a href="{{ url_for('index') }}#prediction-form" class="nav-link-custom">Predict Crop</a>
+        <a href="{{ url_for('history') }}" class="nav-link-custom active">History</a>
+        <a href="{{ url_for('about') }}" class="nav-link-custom">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-xl-11">
+
+        <div class="main-card mt-0">
+          <div class="d-flex flex-wrap justify-content-between align-items-center section-header">
+            <div>
+              <h2><span>📋</span> Crop Prediction History</h2>
+              <p class="text-muted small mb-0">Record of recent soil evaluations and recommended crops.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                🟢 Local SQLite Database: Connected
+              </span>
+              <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-success">
+                + New Prediction
+              </a>
+            </div>
+          </div>
+
+          <!-- Empty History State -->
+          {% if not records %}
+          <div class="text-center py-5 my-3">
+            <div class="fs-1 mb-2">🌾</div>
+            <h4 class="fw-bold text-secondary">No predictions yet.</h4>
+            <p class="text-muted mb-4">Make your first prediction!</p>
+            <a href="{{ url_for('index') }}" class="btn btn-predict d-inline-flex w-auto px-4 py-2">
+              🌱 Predict a Crop
+            </a>
+          </div>
+          {% else %}
+
+          <!-- Table of Predictions -->
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Date/Time</th>
+                  <th>N</th>
+                  <th>P</th>
+                  <th>K</th>
+                  <th>Temperature</th>
+                  <th>Humidity</th>
+                  <th>pH</th>
+                  <th>Rainfall</th>
+                  <th>Recommended Crop</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in records %}
+                <tr>
+                  <td class="text-muted small">{{ row.timestamp }}</td>
+                  <td><strong>{{ row.N }}</strong></td>
+                  <td><strong>{{ row.P }}</strong></td>
+                  <td><strong>{{ row.K }}</strong></td>
+                  <td>{{ row.temperature }} °C</td>
+                  <td>{{ row.humidity }} %</td>
+                  <td>{{ row.ph }}</td>
+                  <td>{{ row.rainfall }} mm</td>
+                  <td>
+                    <span class="crop-tag">
+                      🌿 {{ row.predicted_crop }}
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top small text-muted">
+            <span>Showing {{ records|length }} recent prediction(s) from SQLite database</span>
+            <a href="{{ url_for('index') }}" class="text-success text-decoration-none fw-bold">
+              ← Return to Home
+            </a>
+          </div>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center">
+    <div class="container">
+      <p class="mb-1"><strong>🌱 Smart Crop Prediction System</strong> &bull; Prediction History Ledger</p>
+      <p class="small text-muted mb-0">Offline-capable &bull; SQLite3 Integrated</p>
+    </div>
+  </footer>
+
+  <!-- Local Scripts -->
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

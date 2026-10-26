@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Crop Prediction System - Agricultural AI Advisor</title>
+
+  <!-- Local Offline Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  <!-- Direct File Explorer (file://) Fallback -->
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.write('<link rel="stylesheet" href="../static/css/bootstrap.min.css">');
+      document.write('<link rel="stylesheet" href="../static/css/style.css">');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Direct File Protocol Notice Banner (Only shown if opened via file://) -->
+  <div id="fileProtocolNotice" class="file-protocol-banner m-3" style="display: none;">
+    <strong>⚠️ Direct File Mode:</strong> You opened this template directly from File Explorer. 
+    To execute Machine Learning predictions, please start the local server by double-clicking <strong>run_offline.bat</strong> or running <code>py app.py</code>, then visit <a href="http://localhost:5000" class="fw-bold text-dark">http://localhost:5000</a>.
+  </div>
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.getElementById('fileProtocolNotice').style.display = 'block';
+    }
+  </script>
+
+  <!-- Navbar -->
+  <nav class="custom-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="{{ url_for('index') }}" class="brand-link">
+        <span>🌱</span>
+        <span>Smart Crop</span>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('index') }}" class="nav-link-custom active">Home</a>
+        <a href="{{ url_for('index') }}#prediction-form" class="nav-link-custom">Predict Crop</a>
+        <a href="{{ url_for('history') }}" class="nav-link-custom">History</a>
+        <a href="{{ url_for('about') }}" class="nav-link-custom">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container text-center">
+      <h1 class="hero-title">Smart Crop Prediction System</h1>
+      <p class="hero-subtitle">
+        Make smarter crop choices using soil and environmental conditions.
+      </p>
+      <a href="#prediction-form" class="hero-btn">
+        <span>🌱</span> Predict a Crop
+      </a>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="container my-4" id="prediction-form">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-9">
+
+        <!-- Error Alert from Server -->
+        {% if error_message %}
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+          <strong>⚠️ Notice:</strong> {{ error_message }}
+        </div>
+        {% endif %}
+
+        <!-- Client-Side Alert Container -->
+        <div id="clientAlert" class="alert alert-warning shadow-sm" style="display: none;"></div>
+
+        <!-- Form Card -->
+        <div class="main-card">
+          <div class="section-header">
+            <h2><span>🌾</span> Soil &amp; Environmental Parameters</h2>
+            <p class="text-muted mb-0 small">
+              Enter your soil and weather details below, or use a sample preset to test instantly.
+            </p>
+          </div>
+
+          <!-- Quick Sample Presets -->
+          <div class="presets-bar">
+            <span class="presets-label">⚡ Quick Fill Presets:</span>
+            <button type="button" class="preset-chip" data-crop="rice">🌾 Rice Paddy</button>
+            <button type="button" class="preset-chip" data-crop="maize">🌽 Maize Field</button>
+            <button type="button" class="preset-chip" data-crop="cotton">☁️ Cotton Soil</button>
+            <button type="button" class="preset-chip" data-crop="chickpea">🧆 Chickpea / Gram</button>
+            <button type="button" class="preset-chip" data-crop="coffee">☕ Coffee Mountain</button>
+            <button type="button" class="preset-chip" data-crop="banana">🍌 Banana Grove</button>
+            <button type="button" class="preset-chip" data-crop="apple">🍎 Apple Orchard</button>
+          </div>
+
+          <!-- Prediction Form -->
+          <form id="cropForm" action="{{ url_for('predict') }}" method="POST" novalidate>
+            <div class="row g-4">
+              
+              <!-- Nitrogen (N) -->
+              <div class="col-md-6 form-group-custom">
+                <label for="N" class="form-label-custom">
+                  <span>🧪 Nitrogen (N)</span>
+                  <span class="badge bg-light text-success border">0 - 300 kg/ha</span>
+                </label>
+                <div class="form-hint">Amount of nitrogen in your soil</div>
+                <input
+                  type="number"
+                  step="any"
+                  id="N"
+                  name="N"
+                  class="input-custom mt-1"
+                  placeholder="Enter value (e.g. 90)"
+                  value="{{ form_data.get('N', '') if form_data else '' }}"
+                  required
+                />
+                <div class="field-error" id="N-error"></div>
+              </div>
+
+              <!-- Phosphorus (P) -->
+              <div class="col-md-6 form-group-custom">
+                <label for="P" class="form-label-custom">
+                  <span>🧪 Phosphorus (P)</span>
+                  <span class="badge bg-light text-success border">0 - 300 kg/ha</span>
+                </label>
+                <div class="form-hint">Amount of phosphorus in your soil</div>
+                <input
+                  type="number"
+                  step="any"
+                  id="P"
+                  name="P"
+                  class="input-custom mt-1"
+                  placeholder="Enter value (e.g. 42)"
+                  value="{{ form_data.get('P', '') if form_data else '' }}"
+                  required
+                />
+                <div class="field-error" id="P-error"></div>
+              </div>
+
+              <!-- Potassium (K) -->
+              <div class="col-md-6 form-group-custom">
+                <label for="K" class="form-label-custom">
+                  <span>🧪 Potassium (K)</span>
+                  <span class="badge bg-light text-success border">0 - 300 kg/ha</span>
+                </label>
+                <div class="form-hint">Amount of potassium in your soil</div>
+                <input
+                  type="number"
+                  step="any"
+                  id="K"
+                  name="K"
+                  class="input-custom mt-1"
+                  placeholder="Enter value (e.g. 43)"
+                  value="{{ form_data.get('K', '') if form_data else '' }}"
+                  required
+                />
+                <div class="field-error" id="K-error"></div>
+              </div>
+
+              <!-- Temperature -->
+              <div class="col-md-6 form-group-custom">
+                <label for="temperature" class="form-label-custom">
+                  <span>☀️ Temperature (°C)</span>
+                  <span class="badge bg-light text-success border">-10 to 60 °C</span>
+                </label>
+                <div class="form-hint">Average ambient temperature in Celsius</div>
+                <input
+                  type="number"
+                  step="any"
+                  id="temperature"
+                  name="temperature"
+                  class="input-custom mt-1"
+                  placeholder="Enter value (e.g. 23.5)"
+                  value="{{ form_data.get('temperature', '') if form_data else '' }}"
+                  required
+                />
+                <div class="field-error" id="temperature-error"></div>
+              </div>
+
+              <!-- Humidity -->
+              <div class="col-md-6 form-group-custom">
+                <label for="humidity" class="form-label-custom">
+                  <span>💧 Humidity (%)</span>
+                  <span class="badge bg-light text-success border">0 - 100 %</span>
+                </label>
+                <div class="form-hint">Relative atmospheric humidity percentage</div>
+                <input
+                  type="number"
+                  step="any"
+                  id="humidity"
+                  name="humidity"
+                  class="input-custom mt-1"
+                  placeholder="Enter value (e.g. 80.0)"
+                  value="{{ form_data.get('humidity', '') if form_data else '' }}"
+                  required
+                />
+                <div class="field-error" id="humidity-error"></div>
+              </div>
+
+              <!-- Soil pH -->
+              <div class="col-md-6 form-group-custom">
+                <label for="ph" class="form-label-custom">
+                  <span>⚖️ Soil pH</span>
+                  <span class="badge bg-light text-success border">0.0 - 14.0</span>
+                </label>
+                <div class="form-hint">Soil acidity or alkalinity level (0 to 14)</div>
+                <input
+                  type="number"
+                  step="any"
+                  id="ph"
+                  name="ph"
+                  class="input-custom mt-1"
+                  placeholder="Enter value (e.g. 6.5)"
+                  value="{{ form_data.get('ph', '') if form_data else '' }}"
+                  required
+                />
+                <div class="field-error" id="ph-error"></div>
+              </div>
+
+              <!-- Rainfall -->
+              <div class="col-12 form-group-custom">
+                <label for="rainfall" class="form-label-custom">
+                  <span>🌧️ Rainfall (mm)</span>
+                  <span class="badge bg-light text-success border">0 - 1000 mm</span>
+                </label>
+                <div class="form-hint">Seasonal or monthly precipitation depth in millimeters</div>
+                <input
+                  type="number"
+                  step="any"
+                  id="rainfall"
+                  name="rainfall"
+                  class="input-custom mt-1"
+                  placeholder="Enter value (e.g. 200.0)"
+                  value="{{ form_data.get('rainfall', '') if form_data else '' }}"
+                  required
+                />
+                <div class="field-error" id="rainfall-error"></div>
+              </div>
+
+            </div>
+
+            <!-- Action Button -->
+            <div class="mt-4 text-center">
+              <button type="submit" id="predictBtn" class="btn-predict">
+                <span class="spinner-border spinner-border-sm d-none" id="btnSpinner" role="status"></span>
+                <span id="btnText">🌾 Predict Suitable Crop</span>
+              </button>
+            </div>
+          </form>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center">
+    <div class="container">
+      <p class="mb-1"><strong>🌱 Smart Crop Prediction System</strong> &bull; Powered by Machine Learning &amp; Agronomic Science</p>
+      <p class="small text-muted mb-0">Offline-capable &bull; SQLite3 Integrated &bull; Production Ready</p>
+    </div>
+  </footer>
+
+  <!-- Local Offline Scripts -->
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script>
+    if (window.location.protocol === 'file:') {
+      var s1 = document.createElement('script'); s1.src = '../static/js/bootstrap.bundle.min.js'; document.body.appendChild(s1);
+      var s2 = document.createElement('script'); s2.src = '../static/js/script.js'; document.body.appendChild(s2);
+    }
+  </script>
+</body>
+</html>

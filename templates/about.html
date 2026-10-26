@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About - Smart Crop Prediction System</title>
+
+  <!-- Local Offline Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  <!-- Direct File Explorer (file://) Fallback -->
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.write('<link rel="stylesheet" href="../static/css/bootstrap.min.css">');
+      document.write('<link rel="stylesheet" href="../static/css/style.css">');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="custom-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="{{ url_for('index') }}" class="brand-link">
+        <span>🌱</span>
+        <span>Smart Crop</span>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('index') }}" class="nav-link-custom">Home</a>
+        <a href="{{ url_for('index') }}#prediction-form" class="nav-link-custom">Predict Crop</a>
+        <a href="{{ url_for('history') }}" class="nav-link-custom">History</a>
+        <a href="{{ url_for('about') }}" class="nav-link-custom active">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+
+        <!-- 1. Project Purpose -->
+        <div class="main-card mt-0 mb-4">
+          <div class="section-header">
+            <h2><span>🌱</span> Project Purpose — About the Smart Crop Prediction System</h2>
+          </div>
+          <p class="fs-5 text-secondary">
+            Choosing the right crop for agricultural land is one of the most critical decisions in farming. Incorrect crop selection leads to reduced yields, soil nutrient depletion, and heavy economic loss.
+          </p>
+          <p class="text-secondary">
+            The <strong>Smart Crop Prediction System</strong> helps farmers and students identify the optimal crop for any land parcel by evaluating key soil chemical nutrients (Nitrogen, Phosphorus, Potassium), soil pH acidity, and ambient weather parameters (Temperature, Humidity, Rainfall).
+          </p>
+        </div>
+
+        <!-- 2. How the System Works -->
+        <div class="main-card mb-4">
+          <div class="section-header">
+            <h2><span>⚙️</span> How the System Works</h2>
+            <p class="text-muted small mb-0">End-to-end data pipeline from user input to crop recommendation</p>
+          </div>
+
+          <div class="row g-3 align-items-center text-center my-3">
+            <div class="col-md-3">
+              <div class="flow-step-box">
+                <div class="fs-1 mb-2">🧪</div>
+                <h6 class="fw-bold text-success mb-1">Soil &amp; Weather Data</h6>
+                <p class="small text-muted mb-0">N, P, K, pH, Temp, Humidity, Rainfall</p>
+              </div>
+            </div>
+            <div class="col-md-1 d-none d-md-flex flow-arrow">↓</div>
+            <div class="col-md-3">
+              <div class="flow-step-box">
+                <div class="fs-1 mb-2">🤖</div>
+                <h6 class="fw-bold text-success mb-1">Machine Learning</h6>
+                <p class="small text-muted mb-0">Trained Random Forest Classifier &amp; StandardScaler</p>
+              </div>
+            </div>
+            <div class="col-md-1 d-none d-md-flex flow-arrow">↓</div>
+            <div class="col-md-4">
+              <div class="flow-step-box">
+                <div class="fs-1 mb-2">🌾</div>
+                <h6 class="fw-bold text-success mb-1">Crop Prediction &amp; Recommendation</h6>
+                <p class="small text-muted mb-0">Recommended crop, season, soil type &amp; water needs</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Machine Learning Algorithms -->
+        <div class="main-card mb-4">
+          <div class="section-header">
+            <h2><span>🧠</span> Machine Learning Algorithms</h2>
+            <p class="text-muted small mb-0">Trained and compared on 2,200 real agricultural records across 22 crop classes</p>
+          </div>
+
+          <p class="text-secondary">
+            Four candidate machine learning algorithms were trained with stratified 80/20 train/test splits and standardized input scaling:
+          </p>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <div class="p-3 border rounded-3 bg-light h-100">
+                <h6 class="fw-bold text-success mb-1">🌲 Random Forest (Selected Best Model)</h6>
+                <p class="small text-muted mb-1">
+                  Ensemble of 100 decision trees combining bagging and feature sub-sampling to prevent overfitting.
+                </p>
+                <span class="badge bg-success">Accuracy: 99.55% &bull; F1: 0.9955</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 border rounded-3 bg-light h-100">
+                <h6 class="fw-bold text-success mb-1">🌿 Decision Tree</h6>
+                <p class="small text-muted mb-1">
+                  Hierarchical rule-based tree splitting decisions based on Gini impurity.
+                </p>
+                <span class="badge bg-secondary">Accuracy: 97.95% &bull; F1: 0.9794</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 border rounded-3 bg-light h-100">
+                <h6 class="fw-bold text-success mb-1">📍 K-Nearest Neighbors (KNN)</h6>
+                <p class="small text-muted mb-1">
+                  Distance-based classification grouping points in 7-dimensional normalized feature space.
+                </p>
+                <span class="badge bg-secondary">Accuracy: 97.95% &bull; F1: 0.9793</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 border rounded-3 bg-light h-100">
+                <h6 class="fw-bold text-success mb-1">📈 Logistic Regression</h6>
+                <p class="small text-muted mb-1">
+                  Multinomial linear model establishing decision boundaries across standardized features.
+                </p>
+                <span class="badge bg-secondary">Accuracy: 97.27% &bull; F1: 0.9725</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evaluation Graphics -->
+          <div class="row g-4 mt-2">
+            <div class="col-md-6 text-center">
+              <h6 class="fw-bold text-secondary mb-2">Model Performance Comparison</h6>
+              <img src="{{ url_for('static', filename='images/model_comparison.png') }}" alt="Model Comparison" class="img-fluid border rounded-3 shadow-sm" />
+            </div>
+            <div class="col-md-6 text-center">
+              <h6 class="fw-bold text-secondary mb-2">Agronomic Feature Importance</h6>
+              <img src="{{ url_for('static', filename='images/feature_importance.png') }}" alt="Feature Importance" class="img-fluid border rounded-3 shadow-sm" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Technologies Used -->
+        <div class="main-card mb-4">
+          <div class="section-header">
+            <h2><span>💻</span> Technologies Used</h2>
+            <p class="text-muted small mb-0">Reliable, modern, and production-ready tech stack</p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="p-3 border rounded-3 text-center bg-light h-100">
+                <div class="fs-2 mb-1">🐍</div>
+                <div class="fw-bold">Python</div>
+                <div class="text-muted small">Programming Language</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="p-3 border rounded-3 text-center bg-light h-100">
+                <div class="fs-2 mb-1">🌶️</div>
+                <div class="fw-bold">Flask</div>
+                <div class="text-muted small">Web Backend</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="p-3 border rounded-3 text-center bg-light h-100">
+                <div class="fs-2 mb-1">🔬</div>
+                <div class="fw-bold">Scikit-learn</div>
+                <div class="text-muted small">Machine Learning</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="p-3 border rounded-3 text-center bg-light h-100">
+                <div class="fs-2 mb-1">🐼</div>
+                <div class="fw-bold">Pandas &amp; NumPy</div>
+                <div class="text-muted small">Data Preprocessing</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="p-3 border rounded-3 text-center bg-light h-100">
+                <div class="fs-2 mb-1">🗄️</div>
+                <div class="fw-bold">SQLite3</div>
+                <div class="text-muted small">Embedded Database</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="p-3 border rounded-3 text-center bg-light h-100">
+                <div class="fs-2 mb-1">🌐</div>
+                <div class="fw-bold">HTML5 &amp; CSS3</div>
+                <div class="text-muted small">Frontend Interface</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="p-3 border rounded-3 text-center bg-light h-100">
+                <div class="fs-2 mb-1">⚡</div>
+                <div class="fw-bold">JavaScript</div>
+                <div class="text-muted small">Client Validation</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="p-3 border rounded-3 text-center bg-light h-100">
+                <div class="fs-2 mb-1">🎨</div>
+                <div class="fw-bold">Bootstrap 5</div>
+                <div class="text-muted small">Responsive Layout</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back to Predictor -->
+        <div class="text-center my-4">
+          <a href="{{ url_for('index') }}" class="btn btn-predict d-inline-flex w-auto px-5 py-3">
+            🌱 Predict a Crop
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center">
+    <div class="container">
+      <p class="mb-1"><strong>🌱 Smart Crop Prediction System</strong> &bull; Scientific Crop Advisory</p>
+      <p class="small text-muted mb-0">Offline-capable &bull; SQLite3 Integrated</p>
+    </div>
+  </footer>
+
+  <!-- Local Scripts -->
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

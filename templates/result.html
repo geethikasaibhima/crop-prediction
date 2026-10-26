@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prediction Result - Smart Crop Prediction System</title>
+
+  <!-- Local Offline Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  <!-- Direct File Explorer (file://) Fallback -->
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.write('<link rel="stylesheet" href="../static/css/bootstrap.min.css">');
+      document.write('<link rel="stylesheet" href="../static/css/style.css">');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="custom-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="{{ url_for('index') }}" class="brand-link">
+        <span>🌱</span>
+        <span>Smart Crop</span>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('index') }}" class="nav-link-custom">Home</a>
+        <a href="{{ url_for('index') }}#prediction-form" class="nav-link-custom">Predict Crop</a>
+        <a href="{{ url_for('history') }}" class="nav-link-custom">History</a>
+        <a href="{{ url_for('about') }}" class="nav-link-custom">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Result Container -->
+  <main class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-9">
+
+        <!-- Prominent Result Hero Card -->
+        <div class="result-hero-card">
+          <span class="result-badge">🌱 Recommended Crop</span>
+          <span class="crop-emoji-large">{{ crop_info.emoji }}</span>
+          <h1 class="crop-display-name">{{ crop }}</h1>
+          <p class="crop-summary-text">
+            Based on the soil and environmental conditions you provided, <strong>{{ crop }}</strong> is the recommended crop.
+          </p>
+          <div class="mt-3">
+            <span class="badge bg-success px-3 py-2 fs-6">Confidence: ~{{ confidence }}%</span>
+            <span class="badge bg-light text-dark border px-3 py-2 fs-6 ms-2">Category: {{ crop_info.category }}</span>
+          </div>
+        </div>
+
+        <!-- 2-Column Info Grid: Crop Information & Entered Parameters -->
+        <div class="row g-4 mb-4">
+          
+          <!-- Crop Information Card -->
+          <div class="col-md-7">
+            <div class="info-card">
+              <h4><span>📖</span> About This Crop</h4>
+              
+              <div class="mb-3">
+                <div class="fw-bold text-success small mb-1">Crop Name</div>
+                <div class="small text-dark ps-2 border-start border-success border-2"><strong>{{ crop_info.name }}</strong></div>
+              </div>
+
+              <div class="mb-3">
+                <div class="fw-bold text-success small mb-1">Short Description</div>
+                <div class="small text-secondary ps-2 border-start border-success border-2">{{ crop_info.description }}</div>
+              </div>
+
+              <div class="mb-3">
+                <div class="fw-bold text-success small mb-1">📅 Season</div>
+                <div class="small text-dark ps-2 border-start border-success border-2">{{ crop_info.season }}</div>
+              </div>
+
+              <div class="mb-3">
+                <div class="fw-bold text-success small mb-1">🪴 Suitable Soil</div>
+                <div class="small text-dark ps-2 border-start border-success border-2">{{ crop_info.soil }}</div>
+              </div>
+
+              <div class="mb-0">
+                <div class="fw-bold text-success small mb-1">💧 Water Requirement</div>
+                <div class="small text-dark ps-2 border-start border-success border-2">{{ crop_info.water_requirement }}</div>
+              </div>
+
+              <div class="alert alert-light border mt-3 mb-0 p-2 text-muted" style="font-size: 0.78rem;">
+                ℹ️ <em>General agricultural advisory only. Actual crop yields depend on regional microclimates and field management practices.</em>
+              </div>
+            </div>
+          </div>
+
+          <!-- Entered Soil and Weather Values Card -->
+          <div class="col-md-5">
+            <div class="info-card">
+              <h4><span>📊</span> Entered Parameters</h4>
+              <table class="values-table">
+                <tbody>
+                  <tr>
+                    <td>🧪 Nitrogen</td>
+                    <td>{{ input_data.N }} kg/ha</td>
+                  </tr>
+                  <tr>
+                    <td>🧪 Phosphorus</td>
+                    <td>{{ input_data.P }} kg/ha</td>
+                  </tr>
+                  <tr>
+                    <td>🧪 Potassium</td>
+                    <td>{{ input_data.K }} kg/ha</td>
+                  </tr>
+                  <tr>
+                    <td>☀️ Temperature</td>
+                    <td>{{ input_data.temperature }} °C</td>
+                  </tr>
+                  <tr>
+                    <td>💧 Humidity</td>
+                    <td>{{ input_data.humidity }} %</td>
+                  </tr>
+                  <tr>
+                    <td>⚖️ Soil pH</td>
+                    <td>{{ input_data.ph }}</td>
+                  </tr>
+                  <tr>
+                    <td>🌧️ Rainfall</td>
+                    <td>{{ input_data.rainfall }} mm</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Database Save Status Notification -->
+              <div class="mt-3 pt-2 border-top text-center">
+                {% if db_saved %}
+                  <span class="badge bg-success-subtle text-success border border-success-subtle">
+                    💾 Saved to SQLite Database
+                  </span>
+                {% else %}
+                  <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                    ⚠️ Database save skipped
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Alternate Viable Crops Card -->
+        {% if alternatives %}
+        <div class="main-card py-3 px-4 mb-4">
+          <h5 class="fw-bold text-success mb-2">🌿 Alternate Viable Crops</h5>
+          <p class="small text-muted mb-3">Other crops with high compatibility under your input conditions:</p>
+          <div class="d-flex flex-wrap gap-2">
+            {% for alt in alternatives %}
+            <div class="p-2 px-3 border rounded-3 bg-light d-flex align-items-center gap-2">
+              <span class="fs-5">{{ alt.emoji }}</span>
+              <div>
+                <strong>{{ alt.name }}</strong>
+                <span class="badge bg-secondary ms-1">{{ alt.confidence }}%</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Navigation Buttons -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 no-print">
+          <a href="{{ url_for('index') }}" class="btn btn-predict d-inline-flex w-auto px-4 py-2">
+            🌱 Predict Another Crop
+          </a>
+          <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-light border px-3 py-2">
+              🖨️ Print Advisory
+            </button>
+            <a href="{{ url_for('history') }}" class="btn btn-success px-4 py-2">
+              📋 View History
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center no-print">
+    <div class="container">
+      <p class="mb-1"><strong>🌱 Smart Crop Prediction System</strong> &bull; Scientific Crop Advisory</p>
+      <p class="small text-muted mb-0">Offline-capable &bull; SQLite3 Integrated</p>
+    </div>
+  </footer>
+
+  <!-- Local Scripts -->
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
